@@ -7,7 +7,7 @@
 %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }" />
 <!DOCTYPE html>
-<html>
+<html> 
 <head>
   <title>W3.CSS Template</title>
   <meta charset="UTF-8">
