@@ -95,4 +95,23 @@ public class MemberDAO {
 		}
 		return result;
 	}
+	
+	public boolean isRegisteredID(MemberVO memberVO) {
+		boolean result = false;
+		String id = memberVO.getId();
+		try {
+			conn = dataFactory.getConnection();
+			String query = "select decode(count(*), 1, 'true', 'false') as result from t_member";
+			query += " where id=?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, id);
+			ResultSet rs = pstmt.executeQuery();
+			rs.next();
+			result = Boolean.parseBoolean(rs.getString("result"));
+			System.out.println("result =" + result);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 }

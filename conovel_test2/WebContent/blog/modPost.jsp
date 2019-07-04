@@ -27,9 +27,11 @@
 <div class="w3-col l12 s12">
   <!-- Blog entry -->
   <div class="w3-card-4 w3-margin w3-white">
-  	<form name="articleForm" id="articleForm" class="w3-container" method="post" action="${contextPath }/main/addPost.do" enctype = "multipart/form-data">
-  	<input name="title" class="w3-input w3-border" type="text" maxlength = "500" placeholder="제목" />
-  	<textarea name="content" id="editor"></textarea>
+  	<form name="articleForm" id="articleForm" class="w3-container" method="post" 
+  	action="${contextPath }/main/modPost.do" enctype = "multipart/form-data">
+  	<input name="articleNO" type="hidden" value="${article.articleNO }" />
+  	<input name="title" class="w3-input w3-border" type="text" maxlength = "500" value="${article.title }" />
+  	<textarea name="content" id="editor">${article.content }</textarea>
 
     <script>
 	    ClassicEditor
@@ -39,7 +41,7 @@
 	        } );
 	</script>
 	<div class="w3-margin">
-      <button class="w3-button w3-black w3-padding-large w3-margin-bottom">등록</button>
+      <button class="w3-button w3-black w3-padding-large w3-margin-bottom">수정</button>
     </div>
   	</form>
   <!-- End of Blog entry -->

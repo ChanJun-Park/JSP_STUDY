@@ -152,4 +152,54 @@ public class BoardDAO {
 			e.printStackTrace();
 		}
 	}
+	
+	public void updateArticle(ArticleVO article) {
+		try {
+			conn = dataFactory.getConnection();
+			int articleNO = article.getArticleNO();
+			int parentNO = article.getParentNO();
+			String title = article.getTitle();
+			String content = article.getContent();
+			String imageFileName = article.getImageFileName();
+			String query = "update t_board set title=?, content=?";
+			if (imageFileName != null && imageFileName.length() != 0) 
+			{
+				query += ",imageFileName=?";
+			} else {
+				query += " where articleNO=?";
+			}
+			System.out.println(query);
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, title);
+			pstmt.setString(2, content);
+			if (imageFileName != null && imageFileName.length() != 0) {
+				pstmt.setString(3, imageFileName);
+				pstmt.setInt(4, articleNO);
+			} 
+			else {
+				pstmt.setInt(3, articleNO);
+			}
+			pstmt.executeUpdate();
+			pstmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void deleteArticle(int articleNO) {
+		try {
+			conn = dataFactory.getConnection();
+			String query = "DELETE FROM t_board";
+			query += " WHERE articleNO = ?";
+			System.out.println(query);
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, articleNO);
+			pstmt.executeUpdate();
+			pstmt.close();
+			conn.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

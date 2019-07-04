@@ -26,4 +26,12 @@ public class BoardService {
 	public void addArticle(ArticleVO article) {
 		boardDAO.insertNewArticle(article);
 	}
+	
+	public void modArticle(ArticleVO article) {
+		boardDAO.updateArticle(article);
+	}
+	
+	public void deleteArticle(int articleNO) {
+		boardDAO.deleteArticle(articleNO);
+	}
 }
