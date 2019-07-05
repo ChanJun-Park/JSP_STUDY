@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -105,30 +106,25 @@ public class BoardDAO {
 	
 	private int getNewArticleNO()
 	{
+		int newArticleNO = 0;
 		try {
 			conn = dataFactory.getConnection();
 			String query = "SELECT max(articleNO) from t_board";
 			pstmt = conn.prepareStatement(query);
 			ResultSet rs = pstmt.executeQuery(query);
-			if (rs.next()) {
-				int result = (rs.getInt(1) + 1); 
-//				rs.close();
-//				pstmt.close();
-//				conn.close();    // 왜 해제 하면 안되지?
-				return result;
-			}
+			if (rs.next()) 
+				newArticleNO = (rs.getInt(1) + 1); 
 			rs.close();
 			pstmt.close();
 			conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return 0;
+		return newArticleNO;
 	}
 	
 	public void insertNewArticle(ArticleVO article) {
 		try {
-			conn = dataFactory.getConnection();
 			int articleNO = getNewArticleNO();
 			int parentNO = article.getParentNO();
 			String title = article.getTitle();
@@ -138,6 +134,7 @@ public class BoardDAO {
 			String query = "INSERT INTO t_board (articleNO, parentNO, title, content, imageFileName, id)"
 					+ " VALUES (?, ?, ?, ?, ?, ?)";
 			System.out.println(query);
+			conn = dataFactory.getConnection();
 			pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, articleNO);
 			pstmt.setInt(2, parentNO);
@@ -201,5 +198,66 @@ public class BoardDAO {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public List selectAllArticles(Map pagingMap) {
+		List articlesList = new ArrayList();
+		int section = (Integer) pagingMap.get("section");
+		int pageNum = (Integer) pagingMap.get("pageNum");
+		try {
+			conn = dataFactory.getConnection();
+			String query = "SELECT * "
+					+ "FROM (SELECT ROWNUM as recNum, articleNO, parentNO, title, id, writeDate"
+					+ " FROM (SELECT * FROM t_board ORDER BY articleNO DESC))"
+					+ " WHERE recNum BETWEEN(?-1)*100+(?-1)*10+1 and (?-1)*100+?*10";
+			System.out.println(query);
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, section);
+			pstmt.setInt(2, pageNum);
+			pstmt.setInt(3, section);
+			pstmt.setInt(4, pageNum);
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				int articleNO = rs.getInt("articleNO");
+				int parentNO = rs.getInt("parentNO");
+				String title = rs.getString("title");
+				String id = rs.getString("id");
+				Date writeDate = rs.getDate("writeDate");
+				
+				ArticleVO article = new ArticleVO();
+				article.setArticleNO(articleNO);
+				article.setParentNO(parentNO);
+				article.setTitle(title);
+				article.setId(id);
+				article.setWriteDate(writeDate);
+				articlesList.add(article);
+			}
+			rs.close();
+			pstmt.close();
+			conn.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return articlesList;
+	}
+	
+	public int selectTotArticles() {
+		int totArticlesNummber = 0;
+		try
+		{
+			conn = dataFactory.getConnection();
+			String query = "select count(articleNO) from t_board";
+			System.out.println(query);
+			pstmt = conn.prepareStatement(query);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next())
+				totArticlesNummber = rs.getInt(1);
+			rs.close();
+			pstmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return totArticlesNummber;
 	}
 }

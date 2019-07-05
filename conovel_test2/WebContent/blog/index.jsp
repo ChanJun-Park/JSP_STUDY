@@ -7,6 +7,10 @@
 	request.setCharacterEncoding("utf-8");
 %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }" />
+<c:set var="articlesList" value="${articlesMap.articlesList }" />
+<c:set var="totArticles" value="${articlesMap.totArticles }" />
+<c:set var="section" value="${articlesMap.section }" />
+<c:set var="pageNum" value="${articlesMap.pageNum }" />
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,6 +21,10 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
   <style>
   body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+  .no-uline {text-decoration:none;}
+  .sel-page {text-decoration:none; color:red;}
+  .cls1 {text-decoration:none;}
+  .cls2 {text-align:center; font-size:30px;}
   </style>
 </head>
 <jsp:include page="/blog/template1.jsp" flush="true"></jsp:include>
@@ -63,6 +71,72 @@
 		</c:when>
 	</c:choose>
 <!-- END BLOG ENTRIES -->
+<div class="txt_center">
+	<c:if test="${totArticles != null }">
+		<c:choose>
+			<c:when test="${ totArticles > 100 }">
+				<c:forEach var="page" begin="1" end="10" step="1">
+					<c:if test="${section > 1 && page==1 }">
+						<a class="no-uline" 
+						href="${contextPath }/main/listPost.do?section=${section-1 }&pageNum=10">
+							&nbsp; pre
+						</a>
+					</c:if>
+					<c:choose>
+						<c:when test="${page==pageNum }">
+							<a class="sel-page" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${(section-1)*10 + page}
+							</a>
+						</c:when>
+						<c:otherwise>
+							<a class="no-uline" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${(section-1)*10 + page}
+							</a>
+						</c:otherwise>
+					</c:choose>
+					<c:if test="${page == 10 }">
+						<a class="no-uline" href="${contextPath }/main/listPost.do?section=${section+1}&pageNum=1">
+							&nbsp; next
+						</a>
+					</c:if>
+				</c:forEach>
+			</c:when>
+			<c:when test="${totArticles == 100 }">
+				<c:forEach var="page" begin="1" end="10" step="1">
+					<c:choose>
+						<c:when test="${page==pageNum }">
+							<a class="sel-page" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${page }
+							</a>
+						</c:when>
+						<c:otherwise>
+							<a class="no-uline" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${page }
+							</a>
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
+			</c:when>
+			
+			<c:when test="${totArticles < 100 }">
+				<c:forEach var="page" begin="1" end="${ totArticles/10 + 1}" step="1">
+					<c:choose>
+						<c:when test="${page==pageNum }">
+							<a class="sel-page" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${page }
+							</a>
+						</c:when>
+						<c:otherwise>
+							<a class="no-uline" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${page }
+							</a>
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
+			</c:when>
+		</c:choose>
+	</c:if>
+</div>
 </div>
 
 <!-- Introduction menu -->

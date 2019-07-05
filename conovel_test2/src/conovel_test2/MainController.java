@@ -41,7 +41,7 @@ public class MainController extends HttpServlet {
 	}
 	
 	private void doHandle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("MainController ÁøÀÔ");
+		System.out.println("MainController ì§„ìž…");
 		String nextPage = "";
 		String contextPath = request.getContextPath();
 		System.out.println("contextPath=" + contextPath);
@@ -164,10 +164,22 @@ public class MainController extends HttpServlet {
 	}
 	
 	private void mainAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
-		articlesList = boardService.listArticles();
-		System.out.println(articlesList);
-		request.setAttribute("articlesList", articlesList);
+//		List<ArticleVO> articlesList = new ArrayList<ArticleVO>();
+//		articlesList = boardService.listArticles();
+//		System.out.println(articlesList);
+//		request.setAttribute("articlesList", articlesList);
+		
+		String _section = request.getParameter("section");
+		String _pageNum = request.getParameter("pageNum");
+		int section = Integer.parseInt((_section == null)? "1" : _section);
+		int pageNum = Integer.parseInt((_pageNum == null)? "1" : _pageNum);
+		Map pagingMap = new HashMap();
+		pagingMap.put("section", section);
+		pagingMap.put("pageNum", pageNum);
+		Map articlesMap = boardService.listArticles(pagingMap);
+		articlesMap.put("section", section);
+		articlesMap.put("pageNum", pageNum);
+		request.setAttribute("articlesMap", articlesMap);
 	}
 	
 	private void viewAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -224,9 +236,9 @@ public class MainController extends HttpServlet {
 					System.out.println(fileItem.getFieldName() + "=" + fileItem.getString(encoding));
 					articleMap.put(fileItem.getFieldName(), fileItem.getString(encoding));
 				} else {
-					System.out.println("ÆÄ¸®¹ÌÅÍ ÀÌ¸§ : " + fileItem.getFieldName());
-					System.out.println("ÆÄÀÏÀÌ¸§ : " + fileItem.getName());
-					System.out.println("ÆÄÀÏÅ©±â : " + fileItem.getSize());
+					System.out.println("í•„ë“œ ì´ë¦„ : " + fileItem.getFieldName());
+					System.out.println("íŒŒë¼ë¯¸í„° ì´ë¦„ : " + fileItem.getName());
+					System.out.println("íŒŒì¼ í¬ê¸° : " + fileItem.getSize());
 					articleMap.put(fileItem.getFieldName(), fileItem.getString());
 					
 					if (fileItem.getSize() > 0) {
