@@ -236,9 +236,9 @@ public class MainController extends HttpServlet {
 					System.out.println(fileItem.getFieldName() + "=" + fileItem.getString(encoding));
 					articleMap.put(fileItem.getFieldName(), fileItem.getString(encoding));
 				} else {
-					System.out.println("필드 이름 : " + fileItem.getFieldName());
-					System.out.println("파라미터 이름 : " + fileItem.getName());
-					System.out.println("파일 크기 : " + fileItem.getSize());
+					System.out.println("�븘�뱶 �씠由� : " + fileItem.getFieldName());
+					System.out.println("�뙆�씪誘명꽣 �씠由� : " + fileItem.getName());
+					System.out.println("�뙆�씪 �겕湲� : " + fileItem.getSize());
 					articleMap.put(fileItem.getFieldName(), fileItem.getString());
 					
 					if (fileItem.getSize() > 0) {

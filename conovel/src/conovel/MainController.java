@@ -13,12 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/main/*")
 public class MainController extends HttpServlet {
+	BoardService boardService;
 	MemberDAO memberDAO;
 	MemberVO memberVO;
 	
 	public void init(ServletConfig config) throws ServletException {
 		System.out.println("MainController 생성자 호출");
 		memberDAO = new MemberDAO();
+		boardService = new BoardService();
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -38,10 +40,9 @@ public class MainController extends HttpServlet {
 		
 		String nextPage = "";
 		if(action == null || action.equals("/listPost.do")) {
-			
+			listPostAction(request, response);
 			nextPage = "/blog/index.jsp";
 		} else if (action.equals("/registerForm.do")) {
-			
 			nextPage = "/register/register.jsp";
 		} else if (action.equals("/register.do")) {
 			boolean registerResult = registerAction(request, response);
@@ -69,6 +70,11 @@ public class MainController extends HttpServlet {
 		System.out.println("nextPage:" + nextPage);
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
 		dispatch.forward(request, response);
+	}
+	
+	private void listPostAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		List<ArticleVO> articlesList = boardService.listArticles();
+		request.setAttribute("articlesList", articlesList);
 	}
 	
 	private void userInfoDelAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
