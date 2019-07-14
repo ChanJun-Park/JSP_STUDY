@@ -3,7 +3,6 @@ package conovel;
 import java.sql.Date;
 
 public class ArticleVO {
-	private int level;
 	private int articleNO;
 	private int parentNO;
 	private String title;
@@ -15,23 +14,14 @@ public class ArticleVO {
 	public ArticleVO() {
 	}
 	
-	public ArticleVO(int level, int articleNO, int parentNO, 
+	public ArticleVO(int articleNO, int parentNO, 
 			String title, String content, String imageFileName, String id) {
-		this.level = level;
 		this.articleNO = articleNO;
 		this.parentNO = parentNO;
 		this.title = title;
 		this.content = content;
 		this.imageFileName = imageFileName;
 		this.id = id;
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
 	}
 
 	public int getArticleNO() {

@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
+	isELIgnored="false"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath }" />
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,18 +12,24 @@
 </head>
 <body>
 <div class="w3-content" style="max-width:1400px">
+<jsp:include page="common_header.jsp" flush="true" />
 <div class="w3-row">
 	<!-- Blog entries -->
 	<div class="w3-col l12 s12">
 	  <!-- Blog entry -->
 	  <div class="w3-card-4 w3-margin w3-white">
-	  	<form name="articleForm" id="articleForm" class="w3-container" method="post" action="${contextPath }/main/addPost.do" enctype = "multipart/form-data">
+	  	<form name="articleForm" id="articleForm" class="w3-container w3-padding" method="post" action="${contextPath }/main/addPost.do" enctype = "multipart/form-data">
 	  	<input name="title" class="w3-input w3-border" type="text" maxlength = "500" placeholder="제목" />
 	  	<textarea name="content" id="editor"></textarea>
 	
 	    <script>
 		    ClassicEditor
-		        .create( document.querySelector( '#editor' ) )
+		        .create( document.querySelector( '#editor' ), {
+		        	language: 'ko',        
+		        	ckfinder: {
+		                uploadUrl: '/fileupload'
+		            }
+		        } )
 		        .catch( error => {
 		            console.error( error );
 		        } );
