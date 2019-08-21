@@ -73,12 +73,24 @@ public class MainController extends HttpServlet {
 			nextPage="/blog/writePost.jsp";
 		} 
 		else if(action.equals("/addPost.do")) {
-			addPostAction(request, response);
+			addPostAction(request, response);			
 			nextPage="/main/listPost.do";
 		} 
 		else if (action.equals("/viewPost.do")) {
 			viewPostAction(request, response);
 			nextPage = "/blog/viewPost.jsp";
+		}
+		else if (action.equals("/modPostForm.do")) {
+			viewPostAction(request, response);
+			nextPage = "/blog/modPost.jsp";
+		}
+		else if (action.equals("/modPost.do")) {
+			modPostAction(request, response);
+			nextPage = "/main/listPost.do";
+		}
+		else if (action.equals("/delPost.do")) {
+			delPostAction(request, response);
+			nextPage = "/main/listPost.do";
 		}
 		else if (action.equals("/registerForm.do")) {
 			nextPage = "/register/register.jsp";
@@ -115,6 +127,40 @@ public class MainController extends HttpServlet {
 		System.out.println("nextPage:" + nextPage);
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
 		dispatch.forward(request, response);
+	}
+	
+	private void delPostAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int articleNO = Integer.parseInt(request.getParameter("articleNO"));
+		boardService.removeArticle(articleNO);
+	}
+	
+	private void modPostAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Map<String, String> articleMap = upload(request, response);
+		int articleNO = Integer.parseInt(request.getParameter("articleNO"));
+		String title = articleMap.get("title");
+		String content = articleMap.get("content");
+		String imageFileName = articleMap.get("imageFileName");
+		ArticleVO articleVO = new ArticleVO();
+		
+		HttpSession session = request.getSession(true);
+		String user_id = (String)session.getAttribute("login_id");
+		articleVO.setArticleNO(articleNO);
+		articleVO.setParentNO(0);
+		articleVO.setId(user_id);
+		articleVO.setTitle(title);
+		articleVO.setContent(content);
+		articleVO.setImageFileName(imageFileName);
+		boardService.modArticle(articleVO);
+		
+		if (imageFileName != null && imageFileName.length() != 0) {
+			String originalFileName = articleMap.get("originalFileName");
+			File srcFile = new File(ARTICLE_IMAGE_REPO + "\\temp\\" + imageFileName);
+			File destDir = new File(ARTICLE_IMAGE_REPO + "\\" + articleNO);
+			destDir.mkdirs();
+			FileUtils.moveFileToDirectory(srcFile, destDir, true);
+			File oldFile = new File(ARTICLE_IMAGE_REPO + "\\" + articleNO + "\\" + originalFileName);
+			oldFile.delete();
+		}
 	}
 	
 	private void viewPostAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -213,8 +259,20 @@ public class MainController extends HttpServlet {
 	}
 	
 	private void listPostAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<ArticleVO> articlesList = boardService.listArticles();
-		request.setAttribute("articlesList", articlesList);
+//		List<ArticleVO> articlesList = boardService.listArticles();
+//		request.setAttribute("articlesList", articlesList);
+		
+		String _section = request.getParameter("section");
+		String _pageNum = request.getParameter("pageNum");
+		int section = Integer.parseInt((_section == null)? "1" : _section);
+		int pageNum = Integer.parseInt((_pageNum == null)? "1" : _pageNum);
+		Map pagingMap = new HashMap();
+		pagingMap.put("section", section);
+		pagingMap.put("pageNum", pageNum);
+		Map articlesMap = boardService.listArticles(pagingMap);
+		articlesMap.put("section", section);
+		articlesMap.put("pageNum", pageNum);
+		request.setAttribute("articlesMap", articlesMap);
 	}
 	
 	private void userInfoDelAction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

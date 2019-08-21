@@ -5,13 +5,26 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }" />
+<c:set var="articlesList" value="${articlesMap.articlesList }" />
+<c:set var="totArticles" value="${articlesMap.totArticles }" />
+<c:set var="section" value="${articlesMap.section }" />
+<c:set var="pageNum" value="${articlesMap.pageNum }" />
 <%
 	request.setCharacterEncoding("UTF-8");
 %>
 <!DOCTYPE html>
 <html>
+<head>
 <title>Conovel's blog</title>
+<style>
+body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+.no-uline {text-decoration:none;}
+.sel-page {text-decoration:none; color:red;}
+.cls1 {text-decoration:none;}
+.cls2 {text-align:center; font-size:30px;}
+</style>
 <jsp:include page="common_head.jsp" flush="true" />
+</head>
 <body class="w3-light-grey">
 
 <!-- w3-content defines a container for fixed size centered content, 
@@ -62,6 +75,72 @@ and is wrapped around the whole page content, except for the footer in this exam
   	</c:when>
   </c:choose>
 <!-- END BLOG ENTRIES -->
+<div style="text-align:center; font-size:25px;">
+	<c:if test="${totArticles != null }">
+		<c:choose>
+			<c:when test="${ totArticles > 100 }">
+				<c:forEach var="page" begin="1" end="10" step="1">
+					<c:if test="${section > 1 && page==1 }">
+						<a class="no-uline" 
+						href="${contextPath }/main/listPost.do?section=${section-1 }&pageNum=10">
+							&nbsp; pre
+						</a>
+					</c:if>
+					<c:choose>
+						<c:when test="${page==pageNum }">
+							<a class="sel-page" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${(section-1)*10 + page}
+							</a>
+						</c:when>
+						<c:otherwise>
+							<a class="no-uline" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${(section-1)*10 + page}
+							</a>
+						</c:otherwise>
+					</c:choose>
+					<c:if test="${page == 10 }">
+						<a class="no-uline" href="${contextPath }/main/listPost.do?section=${section+1}&pageNum=1">
+							&nbsp; next
+						</a>
+					</c:if>
+				</c:forEach>
+			</c:when>
+			<c:when test="${totArticles == 100 }">
+				<c:forEach var="page" begin="1" end="10" step="1">
+					<c:choose>
+						<c:when test="${page==pageNum }">
+							<a class="sel-page" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${page }
+							</a>
+						</c:when>
+						<c:otherwise>
+							<a class="no-uline" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${page }
+							</a>
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
+			</c:when>
+			
+			<c:when test="${totArticles < 100 }">
+				<c:forEach var="page" begin="1" end="${ totArticles/10 + 1}" step="1">
+					<c:choose>
+						<c:when test="${page==pageNum }">
+							<a class="sel-page" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${page }
+							</a>
+						</c:when>
+						<c:otherwise>
+							<a class="no-uline" href="${contextPath }/main/listPost.do?section=${section}&pageNum=${page}">
+								${page }
+							</a>
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
+			</c:when>
+		</c:choose>
+	</c:if>
+</div>
 </div>
 
 <jsp:include page="common_side.jsp" flush="true" />

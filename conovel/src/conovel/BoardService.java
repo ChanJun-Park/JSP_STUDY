@@ -1,6 +1,8 @@
 package conovel;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BoardService {
 	BoardDAO boardDAO;
@@ -22,5 +24,22 @@ public class BoardService {
 		ArticleVO article = null;
 		article = boardDAO.selectArticle(articleNO);
 		return article;
+	}
+	
+	public void removeArticle(int articleNO) {
+		boardDAO.deleteArticle(articleNO);
+	}
+	
+	public void modArticle(ArticleVO articleVO) {
+		boardDAO.updateArticle(articleVO);
+	}
+	
+	public Map listArticles(Map pagingMap) {
+		Map articlesMap = new HashMap();
+		List<ArticleVO> articleList = boardDAO.selectAllArticles(pagingMap);
+		int totArticles = boardDAO.selectTotArticles();
+		articlesMap.put("articlesList", articleList);
+		articlesMap.put("totArticles", totArticles);
+		return articlesMap;
 	}
 }

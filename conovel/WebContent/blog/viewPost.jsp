@@ -36,6 +36,19 @@ and is wrapped around the whole page content, except for the footer in this exam
     <div class="w3-container">
       ${article.content }
     </div>
+    <div class="w3-container">
+      <a href="${contextPath }/main/listPost.do" class="w3-button w3-black w3-padding-large w3-margin-bottom">
+	  	목록으로
+	  </a>
+	  <c:if test="${article.id == login_id }">
+	    <a href="${contextPath }/main/modPostForm.do?articleNO=${article.articleNO }" class="w3-button w3-black w3-padding-large w3-margin-bottom">
+	  	  글 수정
+	    </a>
+	    <a href="${contextPath }/main/delPost.do?articleNO=${article.articleNO }" class="w3-button w3-black w3-padding-large w3-margin-bottom">
+	  	  글 삭제
+	    </a>
+	  </c:if>
+    </div>
   </div>
   <hr>
 <!-- END BLOG ENTRIES -->
